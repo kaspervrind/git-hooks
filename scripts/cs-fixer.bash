@@ -2,7 +2,9 @@
 
 echo "php-cs-fixer pre commit hook start"
 
-if [ -e tools/php-cs-fixer/vendor/bin/php-cs-fixer ]; then
+if [ "$( docker compose ps php | grep 'php' )" ]; then
+   csfixer="docker compose exec php /app/tools/php-cs-fixer/vendor/bin/php-cs-fixer"
+elif [ -e tools/php-cs-fixer/vendor/bin/php-cs-fixer ]; then
   csfixer="tools/php-cs-fixer/vendor/bin/php-cs-fixer"
 elif [ -e vendor/friendsofphp/php-cs-fixer/php-cs-fixer ]; then
   csfixer="vendor/friendsofphp/php-cs-fixer/php-cs-fixer"

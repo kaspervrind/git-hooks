@@ -4,16 +4,11 @@ set -e
 
 pcurrent=$(pwd)
 echo $pcurrent
-# example of commands for different languages
-# eslint .         # JS code quality check
-# npm test         # JS unit tests
-# flake8 .         # python code quality check
-# nosetests        # python nose
-# just put your usual test command here
-if [[ $pcurrent == "/Users/kaspervrind/code/mijnoverheid-sf3-docker" ]]; then
-    unbuffer /usr/local/bin/docker-compose exec php vendor/bin/phpunit -dxdebug.coverage_enable=1 --fail-on-warning  --configuration phpunit.xml.dist
-elif [[ $pcurrent == "/Users/kaspervrind/code/portico" ]]; then
-    unbuffer /usr/local/bin/docker-compose exec portico vendor/phpunit/phpunit/phpunit
+
+if [ "$( docker compose ps php | grep 'php' )" ]; then
+    unbuffer docker compose exec php /app/vendor/bin/phpunit --configuration /app/phpunit.xml.dist
+elif [ "$( docker compose ps php-fpm | grep 'php-fpm' )" ]; then
+    unbuffer docker compose exec php-fpm /app/vendor/bin/phpunit --configuration /app/phpunit.xml.dist
 elif [ -e vendor/bin/phpunit ] && [ -e vendor/phpunit/phpunit/phpunit ] && [ -e phpunit.xml ]; then
     vendor/bin/phpunit -dxdebug.coverage_enable=1 --fail-on-warning  --configuration phpunit.xml
 elif [ -e vendor/bin/phpunit ] && [ -e vendor/phpunit/phpunit/phpunit ] && [ -e phpunit.xml.dist ]; then
