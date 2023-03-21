@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 
 echo "php-cs-fixer pre commit hook start"
 
 if [ "$( docker compose ps php | grep 'php' )" ]; then
-   csfixer="docker compose exec php /app/tools/php-cs-fixer/vendor/bin/php-cs-fixer"
+   csfixer="docker compose exec -T php /app/tools/php-cs-fixer/vendor/bin/php-cs-fixer --config=/app/.php-cs-fixer.php"
 elif [ -e tools/php-cs-fixer/vendor/bin/php-cs-fixer ]; then
   csfixer="tools/php-cs-fixer/vendor/bin/php-cs-fixer"
 elif [ -e vendor/friendsofphp/php-cs-fixer/php-cs-fixer ]; then
@@ -14,10 +14,24 @@ fi;
 
 echo "Fixer: $csfixer"
 
-git status --porcelain | grep -e '^[AM]\(.*\).php$' | cut -c 3- | while read line; do
-    echo "checking $line"
-    ${csfixer} fix --verbose "$line";
-    git add "$line";
+function fix ()
+{
+  ${csfixer} fix --verbose $@;
+}
+
+files=()
+for file in $(git status --porcelain | grep -e '^[AM[:blank:]]\(.*\).php$' | cut -c 4-); do
+  if [ -z "$file" ]; then
+     continue
+   fi
+   files+=("${file}")
 done
 
+echo  "There are ${#files[@]} to be fixed"
+
+if [ ${#files[@]} -gt 0 ]; then
+  fix ${files[@]}
+  echo "fixing"
+  git add ${files[@]}
+fi
 echo "php-cs-fixer pre commit hook finish"
