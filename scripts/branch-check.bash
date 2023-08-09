@@ -9,7 +9,9 @@ set -e
 cd "${0%/*}/../../../"
 pwd
 
-.git/hooks/scripts/branch-check.bash
-
-echo "Running CS-fixer"
-.git/hooks/scripts/cs-fixer.bash
+# Check on the branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" == "main" ]; then
+    echo "You are on the main branch. Please switch to an other branch and try again."
+    exit 1
+fi
