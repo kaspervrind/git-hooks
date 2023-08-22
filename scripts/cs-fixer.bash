@@ -20,7 +20,7 @@ function fix ()
 }
 
 files=()
-for file in $(git status --porcelain | grep -e '^[AM[:blank:]]\(.*\).php$' | cut -c 4-); do
+for file in $(git diff --name-only --cached --diff-filter=d | grep '.php'); do
   if [ -z "$file" ]; then
      continue
    fi
