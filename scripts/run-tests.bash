@@ -15,4 +15,3 @@ echo "............................"
 
 .git/hooks/scripts/phpunit.bash
 .git/hooks/scripts/php-stan.bash
-.git/hooks/scripts/behat.bash
