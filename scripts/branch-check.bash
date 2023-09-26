@@ -11,7 +11,7 @@ pwd
 
 # Check on the branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$BRANCH" == "main" ]; then
+if [ "$BRANCH" == "main" ] || [[ "$BRANCH" == "develop" ]] || [[ "$BRANCH" == "master" ]]; then
     echo "You are on the main branch. Please switch to an other branch and try again."
     exit 1
 fi
