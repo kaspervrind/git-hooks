@@ -5,6 +5,21 @@ set -e
 pcurrent=$(pwd)
 echo $pcurrent
 
+files=()
+for file in $(git diff --name-only --cached --diff-filter=d | grep '.php'); do
+  if [ -z "$file" ]; then
+     continue
+   fi
+   files+=("${file}")
+done
+
+echo  "There are ${#files[@]} to be fixed"
+
+if [ ${#files[@]} = 0 ]; then
+  echo "no PHP files to be changed. Don't execute phpunit"
+  exit 0
+fi
+
 if [ "$( docker compose ps php | grep 'php' )" ]; then
     unbuffer docker compose exec php /app/vendor/bin/phpunit --configuration /app/phpunit.xml.dist
 elif [ "$( docker compose ps php-fpm | grep 'php-fpm' )" ]; then
